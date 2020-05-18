@@ -1,0 +1,41 @@
+service: pact-mock
+
+provider:
+  name: aws
+  versionFunctions: false
+  runtime: nodejs12.x
+  region: eu-west-2
+  stage: ${opt:stage, 'local'}
+
+plugins:
+  - serverless-webpack
+  - '@you54f/serverless-offline'
+
+layers:
+  PactStandalone:
+    name: PactStandalone
+    compatibleRuntimes:
+      - nodejs12.x
+    description: Required for pact
+    package:
+      artifact: layer/pact-layer.zip
+
+custom:
+  webpack:
+    webpackConfig: webpack.config.js
+    includeModules:
+      forceExclude:
+        - pdf-lib
+        - aws-sdk
+    packager: "yarn"
+  serverless-offline:
+    location: .webpack/service
+
+functions:
+  pact_mock:
+    name: pact-mock-${self:provider.stage}
+    handler: src/functions/handler.handler
+    layers:
+      - { Ref: PactStandaloneLambdaLayer }
+    events:
+      - http: ANY /{path+}

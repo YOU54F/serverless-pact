@@ -1,0 +1,130 @@
+require 'pact_broker/client/error'
+require 'pact_broker/client/pact_broker_client'
+require 'pact_broker/client/retry'
+require 'pact_broker/client/matrix/formatter'
+require 'term/ansicolor'
+
+module PactBroker
+  module Client
+    class CanIDeploy
+
+      class Result
+        attr_reader :success, :message
+
+        def initialize success, message = nil
+          @success = success
+          @message = message
+        end
+      end
+
+      def self.call(pact_broker_base_url, version_selectors, matrix_options, options, pact_broker_client_options={})
+        new(pact_broker_base_url, version_selectors, matrix_options, options, pact_broker_client_options).call
+      end
+
+      def initialize(pact_broker_base_url, version_selectors, matrix_options, options, pact_broker_client_options)
+        @pact_broker_base_url = pact_broker_base_url
+        @version_selectors = version_selectors
+        @matrix_options = matrix_options
+        @options = options
+        @pact_broker_client_options = pact_broker_client_options
+      end
+
+      def call
+        create_result(fetch_matrix_with_retries)
+      rescue PactBroker::Client::Error => e
+        Result.new(false, e.message)
+      rescue StandardError => e
+        Result.new(false, "Error retrieving matrix. #{e.class} - #{e.message}\n#{e.backtrace.join("\n")}")
+      end
+
+      private
+
+      attr_reader :pact_broker_base_url, :version_selectors, :matrix_options, :options, :pact_broker_client_options
+
+      def create_result(matrix)
+        if matrix.deployable?
+          Result.new(true, success_message(matrix))
+        else
+          Result.new(false, failure_message(matrix))
+        end
+      end
+
+      def success_message(matrix)
+        message = format_matrix(matrix)
+        if format != 'json'
+          message = 'Computer says yes \o/ ' + message + "\n\n" + Term::ANSIColor.green(matrix.reason)
+        end
+        message
+      end
+
+      def failure_message(matrix)
+        message = format_matrix(matrix)
+        if format != 'json'
+          message = 'Computer says no ¯\_(ツ)_/¯ ' + message + "\n\n" + Term::ANSIColor.red(matrix.reason)
+        end
+        message
+      end
+
+      def format_matrix(matrix)
+        formatted_matrix = Matrix::Formatter.call(matrix, format)
+        if format != 'json' && formatted_matrix.size > 0
+          "\n\n" + formatted_matrix
+        else
+          formatted_matrix
+        end
+      end
+
+      def format
+        options[:output]
+      end
+
+      def fetch_matrix
+        Retry.while_error { pact_broker_client.matrix.get(version_selectors, matrix_options) }
+      end
+
+      def fetch_matrix_with_retries
+        matrix = fetch_matrix
+        if retry_while_unknown?
+          check_if_retry_while_unknown_supported(matrix)
+          if matrix.any_unknown?
+            matrix = Retry.until_truthy_or_max_times(retry_options) do
+              fetch_matrix
+            end
+          end
+        end
+        matrix
+      end
+
+      def pact_broker_client
+        @pact_broker_client ||= PactBroker::Client::PactBrokerClient.new(base_url: pact_broker_base_url, client_options: pact_broker_client_options)
+      end
+
+      def retry_while_unknown?
+        options[:retry_while_unknown] > 0
+      end
+
+      def retry_options
+        {
+          condition: lambda { |matrix| !matrix.any_unknown?  },
+          times: retry_tries,
+          sleep: retry_interval,
+          sleep_first: true
+        }
+      end
+
+      def retry_interval
+        options[:retry_interval]
+      end
+
+      def retry_tries
+        options[:retry_while_unknown]
+      end
+
+      def check_if_retry_while_unknown_supported(matrix)
+        if !matrix.supports_unknown_count?
+          raise PactBroker::Client::Error.new("This version of the Pact Broker does not provide a count of the unknown verification results. Please upgrade your Broker to >= v2.23.4")
+        end
+      end
+    end
+  end
+end

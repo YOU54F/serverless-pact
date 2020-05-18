@@ -1,0 +1,12 @@
+version: "3.1"
+services:
+  pact_mock_service:
+    build:
+      context: .
+      dockerfile: local/docker/Dockerfile
+    volumes:
+        - ./tmp:/tmp
+    entrypoint: "bash -c 'yarn run start'"
+    ports:
+      - 8281:8281
+      - 9999:9999
