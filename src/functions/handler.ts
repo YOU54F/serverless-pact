@@ -26,15 +26,14 @@ export const handler: APIGatewayProxyPromiseHandler = async (
     logger.info({ result: result.data }, "data");
     return ok(result.data);
   } catch (error) {
-    logger.error(
-      { error, stream: pactMockRes.childProcess.stdout },
-      "dun borked"
-    );
+    // logger.error(
+    //   { error, stream: pactMockRes.childProcess.stdout },
+    //   "dun borked"
+    // );
     pactMockRes.childProcess.kill();
 
     return internalServerError();
   } finally {
-    logger.info("ending gracefully");
     pactMockRes.childProcess.kill();
     dest.flushSync();
   }

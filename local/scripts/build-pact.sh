@@ -7,20 +7,16 @@ mkdir -p layer
 rm -rf layer/pact
 
 container_id=$(docker create -ti pact-builder /bin/sh)
-docker cp "$container_id:/opt/" ./layer/pact
-
-cat > layer/pact/.slsignore << EOF
-share/**
-EOF
+docker cp "$container_id:/opt/pact" ./layer/pact
 
 cd layer/pact || exit
-ln -s pact/bin/pact pact
-ln -s pact/bin/pact-broker pact-broker
-ln -s pact/bin/pact-message pact-message
-ln -s pact/bin/pact-mock-service pact-mock-service
-ln -s pact/bin/pact-provider-verifier pact-provider-verifier
-ln -s pact/bin/pact-publish pact-publish
-ln -s pact/bin/pact-stub-service pact-stub-service
+ln -s bin/pact pact
+ln -s bin/pact-broker pact-broker
+ln -s bin/pact-message pact-message
+ln -s bin/pact-mock-service pact-mock-service
+ln -s bin/pact-provider-verifier pact-provider-verifier
+ln -s bin/pact-publish pact-publish
+ln -s bin/pact-stub-service pact-stub-service
 
-cd layer
-zip -9r pact-layer.zip pact
+zip -9r pact-layer.zip ./bin ./lib pact*
+mv pact-layer.zip ..
