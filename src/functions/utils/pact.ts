@@ -4,8 +4,8 @@ import pino from "pino";
 import internal from "stream";
 
 export interface PactServerResult {
-  reader: boolean;
-  childProcess: ChildProcessByStdio<null, internal.Readable, null>;
+  started: boolean;
+  pactStubProcess: ChildProcessByStdio<null, internal.Readable, null>;
 }
 export const spawnPactServerAndWait = async (
   logger: pino.Logger
@@ -14,20 +14,20 @@ export const spawnPactServerAndWait = async (
     try {
       logger.info("Calling pact mock server");
       let args = ["pact-stub-service"];
-      let args = ["/opt/pact/bin/pact-stub-service"];
+      // let args = ["/opt/pact/bin/pact-stub-service"];
       args.push(`--host`);
       args.push(`0.0.0.0`);
       args.push(`--port`);
       args.push(`9999`);
       args.push(`pact.json`);
-      const childProcess = spawn("/bin/sh", ["-c", args.join(" ")], {
+      const pactStubProcess = spawn("/bin/sh", ["-c", args.join(" ")], {
         stdio: ["ignore", "pipe", process.stderr],
-      }); // (A)
-      const reader = await echoReadable(childProcess.stdout, logger); // (B)
+      });
+      const started = await echoReadable(pactStubProcess.stdout, logger); // (B)
 
       return resolve({
-        reader,
-        childProcess,
+        started,
+        pactStubProcess,
       });
     } catch (e) {
       logger.error(
@@ -40,12 +40,12 @@ export const spawnPactServerAndWait = async (
 };
 
 async function echoReadable(readable: internal.Readable, logger: pino.Logger) {
-  let result;
+  let started;
   for await (const line of chunksToLinesAsync(readable)) {
     logger.info({ line });
     if (line.includes("WEBrick::HTTPServer#start: pid=")) {
-      return (result = true);
+      return (started = true);
     }
   }
-  return result;
+  return started;
 }

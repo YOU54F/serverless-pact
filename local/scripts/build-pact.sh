@@ -9,6 +9,10 @@ rm -rf layer/pact
 container_id=$(docker create -ti pact-builder /bin/sh)
 docker cp "$container_id:/opt/pact" ./layer/pact
 
+# Required lib for AWS Lambda runtime
+# We are renaming this file as lambda looks for libcrypt.so.1 but its a symlink to libcrypt-2.26.so
+docker cp "$container_id:/usr/lib64/libcrypt-2.26.so" ./layer/pact/lib/libcrypt.so.1
+
 cd layer/pact || exit
 ln -s bin/pact pact
 ln -s bin/pact-broker pact-broker
