@@ -8,8 +8,5 @@ up:
 layer-pact:
 	./local/scripts/build-pact.sh
 
-local-bucket-populate:
-	./local/scripts/putObjects.sh
-
 local-lambda-curl:
 	./local/scripts/curlLambda.sh

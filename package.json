@@ -1,10 +1,10 @@
 {
-  "name": "serverless-pact",
-  "version": "1.0.0",
+  "name": "pact-serverless-offline",
+  "version": "0.0.1",
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "./node_modules/.bin/serverless offline start --host 0.0.0.0 --httpPort 8281 --lambdaPort 9932 --location .webpack/service --stage local",
+    "start": "./node_modules/.bin/serverless offline start --host 0.0.0.0 --httpPort 8281 --lambdaPort 9932 --location .webpack/service --stage local --noPrependStageInUrl",
     "start:sut": "npm run start",
     "start:test": "wait-for-it/wait-for-it.sh localhost:3009 --timeout=120 && npm run test:it",
     "lint": "eslint .",

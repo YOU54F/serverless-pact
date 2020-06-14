@@ -22,5 +22,5 @@ ln -s pact/bin/pact-provider-verifier pact-provider-verifier
 ln -s pact/bin/pact-publish pact-publish
 ln -s pact/bin/pact-stub-service pact-stub-service
 
-cd ..
+cd layer
 zip -9r pact-layer.zip pact

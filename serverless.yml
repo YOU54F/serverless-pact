@@ -25,7 +25,6 @@ custom:
     webpackConfig: webpack.config.js
     includeModules:
       forceExclude:
-        - pdf-lib
         - aws-sdk
     packager: "yarn"
   serverless-offline:
