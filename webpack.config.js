@@ -1,5 +1,6 @@
 const webpack = require('webpack')
 const path = require('path')
+const CopyPlugin = require('copy-webpack-plugin');
 const slsw = require('serverless-webpack')
 const nodeExternals = require('webpack-node-externals')
 module.exports = {
@@ -32,6 +33,7 @@ module.exports = {
   plugins: [
     new webpack.EnvironmentPlugin({
       NODE_ENV: 'development'
-    })
+    }),
+    new CopyPlugin({ patterns: [{ from: 'pact.json' }] })
   ]
 }

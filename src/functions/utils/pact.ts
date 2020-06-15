@@ -5,44 +5,54 @@ import internal from "stream";
 
 export interface PactServerResult {
   started: boolean;
-  pactStubProcess: ChildProcessByStdio<null, internal.Readable, null>;
+  pactProcessLog: string[];
 }
 export const spawnPactServerAndWait = async (
   logger: pino.Logger
 ): Promise<PactServerResult> => {
   return new Promise(async (resolve, reject) => {
+    let pactProcessLog: string[] = [];
+    let errorMessage: string;
     try {
       logger.info("Calling pact mock server");
       let args = ["pact-stub-service"];
-      // let args = ["/opt/pact/bin/pact-stub-service"];
       args.push(`--host`);
       args.push(`0.0.0.0`);
       args.push(`--port`);
       args.push(`9999`);
       args.push(`pact.json`);
       const pactStubProcess = spawn("/bin/sh", ["-c", args.join(" ")], {
-        stdio: ["ignore", "pipe", process.stderr],
+        shell: true,
       });
-      const started = await echoReadable(pactStubProcess.stdout, logger); // (B)
-
-      return resolve({
-        started,
-        pactStubProcess,
+      pactStubProcess.stderr.on("data", (data) => {
+        errorMessage = data.toString();
       });
-    } catch (e) {
-      logger.error(
-        { e },
-        "An error occurred whilst calling the pact mock service"
+      const started = await echoReadable(
+        pactStubProcess.stdout,
+        pactProcessLog
       );
-      reject(e);
+
+      if (!started) {
+        return reject(`Pact Stub Service: ${errorMessage}`);
+      } else {
+        return resolve({
+          started,
+          pactProcessLog,
+        });
+      }
+    } catch (e) {
+      throw new Error("An error occurred whilst calling the pact mock service")
     }
   });
 };
 
-async function echoReadable(readable: internal.Readable, logger: pino.Logger) {
-  let started;
+async function echoReadable(
+  readable: internal.Readable,
+  pactProcessLog: string[]
+) {
+  let started = false;
   for await (const line of chunksToLinesAsync(readable)) {
-    logger.info({ line });
+    pactProcessLog.push(line);
     if (line.includes("WEBrick::HTTPServer#start: pid=")) {
       return (started = true);
     }
