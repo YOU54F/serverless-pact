@@ -26,7 +26,7 @@ functions:
     name: pact-mock-${self:provider.stage}
     handler: src/functions/lambda.run
     # Uncomment this on deploy, serverless-offline fails to start if it exists
-    # layers:
-    #   - ${cf:pact-standalone-${self:provider.stage}.PactStandaloneLayerExport}
+    layers:
+      - ${cf:pact-standalone-${self:provider.stage}.PactStandaloneLayerExport}
     events:
       - http: ANY /{path+}
