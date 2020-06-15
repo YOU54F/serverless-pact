@@ -5,20 +5,11 @@ provider:
   versionFunctions: false
   runtime: nodejs12.x
   region: eu-west-2
-  stage: ${opt:stage, 'local'}
+  stage: ${opt:stage, 'dev'}
 
 plugins:
   - serverless-webpack
-  - '@you54f/serverless-offline'
-
-layers:
-  PactStandalone:
-    name: PactStandalone
-    compatibleRuntimes:
-      - nodejs12.x
-    description: Required for pact
-    package:
-      artifact: layer/pact-layer.zip
+  - 'serverless-offline'
 
 custom:
   webpack:
@@ -33,8 +24,9 @@ custom:
 functions:
   pact_mock:
     name: pact-mock-${self:provider.stage}
-    handler: src/functions/handler.handler
+    handler: src/functions/lambda.run
+    # Uncomment this on deploy, serverless-offline fails to start if it exists
     layers:
-      - { Ref: PactStandaloneLambdaLayer }
+      - ${cf:pact-standalone-${self:provider.stage}.PactStandaloneLayerExport}
     events:
       - http: ANY /{path+}

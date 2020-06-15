@@ -1,0 +1,21 @@
+service: pact-standalone
+
+provider:
+  name: aws
+  region: eu-west-2
+  stage: ${opt:stage, 'dev'}
+
+layers:
+  PactStandalone:
+    name: PactStandalone
+    description: Required for pact
+    package:
+      artifact: pact-layer.zip
+
+resources:
+  Outputs:
+    PactStandaloneLayerExport:
+        Value:
+          Ref: PactStandaloneLambdaLayer
+        Export:
+          Name: PactStandaloneLambdaLayer
