@@ -79,6 +79,7 @@ const handler = async (ctx: koa.Context) => {
     );
     throw new Error(error.toString());
   } finally {
+    pactMockRes.pactStubProcess.kill()
     dest.flushSync();
   }
 };

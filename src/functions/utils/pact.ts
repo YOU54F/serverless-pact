@@ -1,4 +1,4 @@
-import { spawn, ChildProcessByStdio } from "child_process";
+import { spawn, ChildProcessByStdio, ChildProcessWithoutNullStreams } from "child_process";
 const { chunksToLinesAsync } = require("@rauschma/stringio");
 import pino from "pino";
 import internal from "stream";
@@ -6,6 +6,7 @@ import internal from "stream";
 export interface PactServerResult {
   started: boolean;
   pactProcessLog: string[];
+  pactStubProcess: ChildProcessWithoutNullStreams;
 }
 export const spawnPactServerAndWait = async (
   logger: pino.Logger
@@ -22,9 +23,7 @@ export const spawnPactServerAndWait = async (
       args.push(`9999`);
       args.push(`pact.json`);
       logger.info(args)
-      const pactStubProcess = spawn("/bin/sh", ["-c", args.join(" ")], {
-        shell: true,
-      });
+      const pactStubProcess = spawn("/bin/sh", ["-c", args.join(" ")]);
       pactStubProcess.stderr.on("data", (data) => {
         errorMessage = data.toString();
       });
@@ -32,13 +31,13 @@ export const spawnPactServerAndWait = async (
         pactStubProcess.stdout,
         pactProcessLog
       );
-
       if (!started) {
         return reject(`Pact Stub Service: ${errorMessage}`);
       } else {
         return resolve({
           started,
           pactProcessLog,
+          pactStubProcess
         });
       }
     } catch (e) {
