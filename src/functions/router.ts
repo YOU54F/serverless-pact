@@ -1,17 +1,14 @@
-import koa from 'koa'
-import http from 'koa-route'
+import koa from "koa";
 import pino from "pino";
 import axios, { AxiosError } from "axios";
 import { spawnPactServerAndWait, PactServerResult } from "./utils/pact";
 
-export const Router = new koa()
+export const Router = new koa();
 
-
-const handler = async (ctx: koa.Context) => {
-
+Router.use(async (ctx) => {
+  
   const dest = pino.destination({ sync: false });
   const logger = pino(dest).child({
-    // ctx,
   });
   let pactMockRes: PactServerResult;
   try {
@@ -19,24 +16,26 @@ const handler = async (ctx: koa.Context) => {
     if (pactMockRes.started) {
       logger.info(
         {
+          ctxReq: ctx.request,
+          ctxRes: ctx.response,
           pactProcess: pactMockRes.started,
           msg: "Pact stub service spawned and ready for request",
         },
         pactMockRes.pactProcessLog.join("")
       );
+
       const result = await axios
-        .get("http://localhost:9999/v2/pet/1845563262948980200", {})
-        .then();
-      logger.info({ result: result.data }, "Pact Stub Service response");
-      // return ok(result.data);
+      .get(`http://localhost:9999${ctx.request.url}`, {})
+      .then();
 
+      logger.info({ result: result.data }, "Pact Stub Service Response");
+  
       ctx.body = result.data
-
     }
   } catch (error) {
     if (error && error.isAxiosError) {
       const axiosError = error as AxiosError;
-
+  
       if (error.response) {
         logger.error(
           {
@@ -47,7 +46,7 @@ const handler = async (ctx: koa.Context) => {
         );
         throw axiosError.response.data;
       }
-
+  
       logger.error(
         {
           error: axiosError.message,
@@ -57,7 +56,7 @@ const handler = async (ctx: koa.Context) => {
       );
       throw axiosError.message;
     }
-
+  
     if (!pactMockRes) {
       logger.error(
         {
@@ -69,7 +68,7 @@ const handler = async (ctx: koa.Context) => {
       throw new Error(error);
     }
     const errorMessageGeneric = "Generic error occurred";
-
+  
     logger.error(
       {
         error: error.toString(),
@@ -79,9 +78,11 @@ const handler = async (ctx: koa.Context) => {
     );
     throw new Error(error.toString());
   } finally {
-    pactMockRes.pactStubProcess.kill()
+    pactMockRes.pactStubProcess.kill();
     dest.flushSync();
   }
-};
 
-Router.use(http.get('*', handler))
+});
+
+
+
