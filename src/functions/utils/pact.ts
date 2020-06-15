@@ -21,6 +21,7 @@ export const spawnPactServerAndWait = async (
       args.push(`--port`);
       args.push(`9999`);
       args.push(`pact.json`);
+      logger.info(args)
       const pactStubProcess = spawn("/bin/sh", ["-c", args.join(" ")], {
         shell: true,
       });

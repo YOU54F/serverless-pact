@@ -1,39 +1,39 @@
-const webpack = require('webpack')
-const path = require('path')
-const CopyPlugin = require('copy-webpack-plugin');
-const slsw = require('serverless-webpack')
-const nodeExternals = require('webpack-node-externals')
+const webpack = require("webpack");
+const path = require("path");
+const CopyPlugin = require("copy-webpack-plugin");
+const slsw = require("serverless-webpack");
+const nodeExternals = require("webpack-node-externals");
 module.exports = {
   entry: slsw.lib.entries,
-  target: 'node',
-  mode: slsw.lib.webpack.isLocal ? 'development' : 'production',
+  target: "node",
+  mode: slsw.lib.webpack.isLocal ? "development" : "production",
   node: {
-    __dirname: true
+    __dirname: true,
   },
   optimization: {
-    minimize: false
+    minimize: false,
   },
   externals: [nodeExternals()],
   module: {
     rules: [
       {
         test: /\.ts$/,
-        loader: 'ts-loader'
-      }
-    ]
+        loader: "ts-loader",
+      },
+    ],
   },
   resolve: {
-    extensions: ['.ts', '.js']
+    extensions: [".ts", ".js"],
   },
   output: {
-    libraryTarget: 'commonjs2',
-    path: path.join(__dirname, '.webpack'),
-    filename: '[name].js'
+    libraryTarget: "commonjs2",
+    path: path.join(__dirname, ".webpack"),
+    filename: "[name].js",
   },
   plugins: [
     new webpack.EnvironmentPlugin({
-      NODE_ENV: 'development'
+      NODE_ENV: "development",
     }),
-    new CopyPlugin({ patterns: [{ from: 'pact.json' }] })
-  ]
-}
+    new CopyPlugin({ patterns: [{ from: "pact.json" }] }),
+  ],
+};

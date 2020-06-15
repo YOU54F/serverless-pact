@@ -23,12 +23,16 @@
     "aws-sdk": "^2.678.0",
     "axios": "^0.19.2",
     "copy-webpack-plugin": "^6.0.2",
+    "koa": "^2.11.0",
+    "koa-route": "^3.2.0",
     "pino": "^6.2.1",
     "serverless": "1.71.1",
+    "serverless-http": "^2.5.0",
     "typescript": "^3.9.2"
   },
   "devDependencies": {
     "@types/jest": "^25.2.2",
+    "@types/koa-route": "^3.2.4",
     "@types/node": "^14.0.1",
     "@typescript-eslint/eslint-plugin": "^2.33.0",
     "@typescript-eslint/parser": "^2.33.0",

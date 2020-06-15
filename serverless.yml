@@ -26,7 +26,15 @@ functions:
     name: pact-mock-${self:provider.stage}
     handler: src/functions/handler.handler
     # Uncomment this on deploy, serverless-offline fails otherwise
-    layers:
-      - ${cf:pact-standalone-${self:provider.stage}.PactStandaloneLayerExport}
+    # layers:
+    #   - ${cf:pact-standalone-${self:provider.stage}.PactStandaloneLayerExport}
     events:
       - http: ANY /{path+}
+  # pact_mock:
+  #   name: pact-mock-${self:provider.stage}
+  #   handler: src/functions/lambda.run
+  #   # Uncomment this on deploy, serverless-offline fails otherwise
+  #   layers:
+  #     - ${cf:pact-standalone-${self:provider.stage}.PactStandaloneLayerExport}
+  #   events:
+  #     - http: ANY /{path+}
