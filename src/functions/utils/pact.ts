@@ -26,6 +26,7 @@ export const spawnPactServerAndWait = async (
 
       const pactStubProcess = spawn("/bin/sh", ["-c", args.join(" ")]);
       pactStubProcess.stderr.on("data", (data) => {
+        logger.error(data.toString());
         errorMessage = data.toString();
       });
       pactStubProcess.stdout.on("data", (data) => {

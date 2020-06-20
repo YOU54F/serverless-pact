@@ -8,10 +8,10 @@
   "interactions": [
     {
       "description": "A get request to get a pet",
-      "providerState": "A pet 1845563262948980200 exists",
+      "providerState": "A pet 123 exists",
       "request": {
         "method": "GET",
-        "path": "/v2/pet/1845563262948980200"
+        "path": "/v2/pet/123"
       },
       "response": {
         "status": 200,
@@ -19,7 +19,7 @@
           "Content-Type": "application/json"
         },
         "body": {
-          "id": 1845563262948980200,
+          "id": 123,
           "name": "doggie",
           "photoUrls": [
             "string"

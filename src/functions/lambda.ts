@@ -1,5 +1,4 @@
-import { app } from './handler'
-// import { Router } from './router'
+import { app } from './app'
 
 import serverless from 'serverless-http'
 
