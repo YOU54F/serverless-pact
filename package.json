@@ -6,11 +6,10 @@
   "scripts": {
     "start": "./node_modules/.bin/serverless offline start --host 0.0.0.0 --httpPort 8281 --lambdaPort 9932 --location .webpack/service --stage local --noPrependStageInUrl | pino-pretty",
     "start:sut": "npm run start",
-    "start:test": "wait-for-it/wait-for-it.sh localhost:3009 --timeout=120 && npm run test:it",
+    "start:test": "wait-for-it/wait-for-it.sh localhost:8281 --timeout=120 && npm run test:it",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
-    "test:all": "npm run test:unit && run-p start:*",
-    "test:unit": "jest",
+    "test:all": "run-p -r start:*",
     "test:it": "jest --config jest.config.it.js"
   },
   "dependencies": {

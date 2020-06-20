@@ -32,8 +32,7 @@ custom:
 functions:
   pact_mock:
     name: pact-mock-${self:provider.stage}
-    handler: src/functions/lambda.run  # koa 
-    # handler: src/functions/handler.run
+    handler: src/functions/lambda.run
     # Uncomment this on deploy, serverless-offline fails to start if it exists
     # layers:
     #   - ${cf:pact-standalone-${self:provider.stage}.PactStandaloneLayerExport}
