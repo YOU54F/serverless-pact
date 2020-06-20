@@ -18,19 +18,21 @@ Router.use(async (ctx) => {
         {
           ctxReq: ctx.request,
           ctxRes: ctx.response,
-          pactProcess: pactMockRes.started,
-          msg: "Pact stub service spawned and ready for request",
+          pactProcess: pactMockRes.started
         },
-        pactMockRes.pactProcessLog.join("")
+        "Pact stub service spawned and ready for request",
       );
 
       const result = await axios
       .get(`http://localhost:9999${ctx.request.url}`, {})
       .then();
 
+
       logger.info({ result: result.data }, "Pact Stub Service Response");
   
       ctx.body = result.data
+    } else {
+      throw new Error('Pact mock service is not started')
     }
   } catch (error) {
     if (error && error.isAxiosError) {
