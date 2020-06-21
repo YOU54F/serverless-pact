@@ -9,6 +9,7 @@ provider:
 
 plugins:
   - serverless-webpack
+  - serverless-offline-pact
   - 'serverless-offline'
 
 custom:
@@ -20,13 +21,20 @@ custom:
     packager: "yarn"
   serverless-offline:
     location: .webpack/service
+  pact:
+    stub:
+      filePath: 'pact.json'
+      noStart: true
+      port: 9998
+      stages:
+        - local
 
 functions:
   pact_mock:
     name: pact-mock-${self:provider.stage}
     handler: src/functions/lambda.run
     # Uncomment this on deploy, serverless-offline fails to start if it exists
-    layers:
-      - ${cf:pact-standalone-${self:provider.stage}.PactStandaloneLayerExport}
+    # layers:
+    #   - ${cf:pact-standalone-${self:provider.stage}.PactStandaloneLayerExport}
     events:
       - http: ANY /{path+}

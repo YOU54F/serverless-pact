@@ -1,0 +1,25 @@
+name: serverless-pact
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: install
+      run: yarn install
+
+    - name: download pact
+      run: | 
+        make download-pact
+        echo "::add-path::/opt/pact/bin/"
+
+    - name: test-all
+      run: yarn run test:all

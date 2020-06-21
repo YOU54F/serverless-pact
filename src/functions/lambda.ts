@@ -1,5 +1,5 @@
-import { Router } from './router'
+import { app } from './app'
 
 import serverless from 'serverless-http'
 
-export const run = serverless(Router)
+export const run = serverless(app)

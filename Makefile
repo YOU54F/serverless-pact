@@ -10,3 +10,6 @@ layer-pact:
 
 local-lambda-curl:
 	./local/scripts/curlLambda.sh
+
+download-pact:
+	./local/scripts/download-pact.sh
