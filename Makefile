@@ -8,6 +8,9 @@ up:
 layer-pact:
 	./local/scripts/build-pact.sh
 
+layer-deploy:
+	cd layer && serverless deploy
+
 local-lambda-curl:
 	./local/scripts/curlLambda.sh
 

@@ -41,7 +41,7 @@ export const spawnPactServerAndWait = async (
         if (errorMessage.includes('EADDRINUSE')){
           return resolve({
             started: true,
-            pactStubProcess: null,
+            pactStubProcess,
           });
         }
         return reject(`Pact Stub Service: ${errorMessage}`);
