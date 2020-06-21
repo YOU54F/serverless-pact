@@ -17,7 +17,9 @@ jobs:
       run: yarn install
 
     - name: download pact
-      run: make download-pact
+      run: | 
+        make download-pact
+        echo "::add-path::/opt/pact/bin/"
 
     - name: test-all
       run: yarn run test:all
