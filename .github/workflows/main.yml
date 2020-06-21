@@ -16,5 +16,8 @@ jobs:
     - name: install
       run: yarn install
 
+    - name: download pact
+      run: make download-pact
+
     - name: test-all
       run: yarn run test:all

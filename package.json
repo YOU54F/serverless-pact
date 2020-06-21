@@ -20,10 +20,7 @@
     "express": "^4.17.1",
     "http-proxy-middleware": "^1.0.4",
     "pino": "^6.2.1",
-    "pino-pretty": "^4.0.0",
-    "serverless": "1.71.1",
-    "serverless-http": "^2.5.0",
-    "typescript": "^3.9.2"
+    "serverless-http": "^2.5.0"
   },
   "devDependencies": {
     "@types/jest": "^25.2.2",
@@ -40,12 +37,15 @@
     "eslint-plugin-standard": "^4.0.1",
     "jest": "^26.0.1",
     "npm-run-all": "^4.1.5",
+    "pino-pretty": "^4.0.0",
+    "serverless": "1.71.1",
     "serverless-domain-manager": "^4.0.1",
     "serverless-offline": "^6.4.0",
     "serverless-offline-pact": "^0.0.5",
     "serverless-webpack": "^5.3.1",
     "ts-jest": "^26.0.0",
     "ts-loader": "^7.0.4",
+    "typescript": "^3.9.2",
     "webpack": "^4.41.6",
     "webpack-node-externals": "^1.7.2"
   },

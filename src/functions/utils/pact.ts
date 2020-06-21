@@ -9,6 +9,7 @@ export interface PactServerResult {
   pactStubProcess: ChildProcessWithoutNullStreams;
 }
 export const spawnPactServerAndWait = async (
+  port:number,
   logger: pino.Logger
 ): Promise<PactServerResult> => {
   return new Promise(async (resolve, reject) => {
@@ -21,7 +22,7 @@ export const spawnPactServerAndWait = async (
       args.push(`--host`);
       args.push(`0.0.0.0`);
       args.push(`--port`);
-      args.push(`9999`);
+      args.push(`${port}`);
       args.push(`pact.json`);
 
       const pactStubProcess = spawn("/bin/sh", ["-c", args.join(" ")]);
@@ -37,6 +38,12 @@ export const spawnPactServerAndWait = async (
         new Promise((r) => setTimeout(r, duration));
       await pause(1000);
       if (!pactStubProcess.pid || pactStubProcess.exitCode && pactStubProcess.exitCode !== 0) {
+        if (errorMessage.includes('EADDRINUSE')){
+          return resolve({
+            started: true,
+            pactStubProcess: null,
+          });
+        }
         return reject(`Pact Stub Service: ${errorMessage}`);
       } else {
         const started = true;

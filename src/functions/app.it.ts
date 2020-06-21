@@ -1,7 +1,4 @@
 import axios, { AxiosError } from "axios";
-import { getMockLogger } from "./utils/getMockLogger";
-
-const logger = getMockLogger();
 
 describe("Handler tests", () => {
   it("should return 200 with a valid pact GET request", async () => {

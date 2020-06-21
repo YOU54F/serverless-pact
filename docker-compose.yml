@@ -5,8 +5,8 @@ services:
       context: .
       dockerfile: local/docker/Dockerfile
     volumes:
-        - ./tmp:/tmp
-    entrypoint: "bash -c 'yarn run start'"
+      - .:/app:cached
+    entrypoint: "bash -c 'yarn run test:all'"
     ports:
       - 8281:8281
       - 9999:9999
