@@ -46,7 +46,7 @@
     "ts-jest": "26.0.0",
     "ts-loader": "7.0.4",
     "typescript": "3.9.2",
-    "webpack": "4.43.0",
+    "webpack": "4.46.0",
     "webpack-node-externals": "1.7.2"
   },
   "author": "YOU54F",
